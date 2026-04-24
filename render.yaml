@@ -19,3 +19,18 @@ services:
         sync: false
       - key: DB_PATH
         value: ./data/muse.db
+
+  - type: web
+    name: muse-web
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build -w apps/web
+    startCommand: cd apps/web && npm run start -- -p $PORT
+    envVars:
+      - key: NODE_VERSION
+        value: 20.11.1
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        value: https://prospecthunter-cy-ass.onrender.com
