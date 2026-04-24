@@ -1,0 +1,310 @@
+﻿:root {
+  --bg: #080b12;
+  --bg-soft: #111725;
+  --panel: #141c2d;
+  --panel-soft: #1b2438;
+  --line: #33415f;
+  --line-strong: #475a84;
+  --text: #eef3ff;
+  --muted: #a9b7d6;
+  --accent: #e6bf7a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Space Grotesk", "Sora", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(1000px 500px at 5% -15%, #2d3d67 0%, transparent 45%),
+    radial-gradient(820px 420px at 100% 0%, #3b2b1d 0%, transparent 42%),
+    linear-gradient(160deg, #0a0f19 0%, #0d1320 45%, #121a2b 100%);
+  color: var(--text);
+}
+
+button {
+  font-family: inherit;
+}
+
+.admin-tab {
+  border: 1px solid var(--line);
+  background: linear-gradient(145deg, #1a243a 0%, #11182a 100%);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: border-color 140ms ease, transform 140ms ease;
+}
+
+.admin-tab:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+
+.admin-panel {
+  background: linear-gradient(165deg, rgba(22, 30, 48, 0.92) 0%, rgba(16, 21, 35, 0.9) 100%);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.admin-panel h2 {
+  margin-top: 0;
+  font-family: "Bebas Neue", "Oswald", "Arial Narrow", sans-serif;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  font-size: 1.45rem;
+}
+
+.admin-list {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-item {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  background: linear-gradient(160deg, #19233a 0%, #11192c 100%);
+}
+
+.admin-item p {
+  margin: 4px 0;
+}
+
+.admin-action {
+  border: 1px solid var(--line);
+  background: #1a2742;
+  color: var(--text);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.admin-action.primary {
+  background: linear-gradient(130deg, #f1d9ad 0%, #d7b06e 100%);
+  color: #1d1710;
+  border-color: transparent;
+  font-weight: 700;
+}
+
+.kanban-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.kanban-col {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: linear-gradient(165deg, #17223a 0%, #131c2f 100%);
+  padding: 10px;
+}
+
+.kanban-col h3 {
+  margin-top: 0;
+  color: var(--accent);
+  font-size: 14px;
+}
+
+.kanban-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  background: #10182b;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 1200px) {
+  .kanban-grid {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 780px) {
+  .kanban-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* V3 signature Afrique admin */
+:root {
+  --heritage-red: #b74a35;
+  --heritage-indigo: #2b3f6d;
+  --heritage-sand: #d6b27c;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  background:
+    repeating-linear-gradient(55deg, rgba(214, 178, 124, 0.2) 0 2px, transparent 2px 16px),
+    radial-gradient(900px 380px at 90% 0%, rgba(43, 63, 109, 0.3) 0%, transparent 70%);
+}
+
+.admin-panel,
+.kanban-col,
+.kanban-card,
+.admin-item {
+  animation: adminReveal 520ms ease both;
+}
+
+.admin-panel {
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.24);
+}
+
+.admin-action.primary:hover {
+  filter: brightness(1.05);
+}
+
+@keyframes adminReveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.decision-chip {
+  display: inline-flex;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(230, 191, 122, 0.15);
+  color: #ffe0ad;
+  font-size: 0.8rem;
+  margin: 6px 0;
+}
+
+.admin-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-tab-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.admin-notice {
+  margin-top: 0;
+  border: 1px solid #7c6033;
+  background: rgba(230, 191, 122, 0.14);
+  color: #ffe4b8;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+@media (max-width: 780px) {
+  .admin-tab-row {
+    position: sticky;
+    top: 6px;
+    z-index: 20;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding: 6px;
+    margin: 0 -2px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: rgba(10, 14, 23, 0.92);
+  }
+
+  .admin-tab {
+    white-space: nowrap;
+  }
+}
+
+/* Visual polish - April 2026 */
+:root {
+  --bg: #070d17;
+  --bg-soft: #10192b;
+  --panel: #16233b;
+  --panel-soft: #202f4b;
+  --line: #3c5177;
+  --line-strong: #5f79ab;
+  --text: #f2f5fb;
+  --muted: #b3c0da;
+  --accent: #e0b87a;
+}
+
+body {
+  font-family: var(--font-body), "Sora", "Trebuchet MS", sans-serif;
+}
+
+h1,
+h2,
+h3,
+.admin-panel h2,
+.kanban-col h3 {
+  font-family: var(--font-display), "Bebas Neue", "Oswald", sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.admin-panel,
+.kanban-col,
+.admin-item,
+.kanban-card {
+  border-color: #425a84;
+  box-shadow: 0 18px 36px rgba(4, 9, 18, 0.34);
+}
+
+.admin-panel {
+  background: linear-gradient(160deg, rgba(24, 36, 58, 0.95) 0%, rgba(14, 22, 37, 0.94) 100%);
+}
+
+.kanban-col {
+  background: linear-gradient(165deg, #1a2a46 0%, #142035 100%);
+}
+
+.kanban-card,
+.admin-item {
+  background: linear-gradient(165deg, rgba(22, 34, 56, 0.96) 0%, rgba(13, 21, 35, 0.95) 100%);
+}
+
+.admin-tab {
+  border-color: #476290;
+  background: linear-gradient(145deg, #1e2c49 0%, #15223b 100%);
+}
+
+.admin-tab.active {
+  border-color: #e0b87a;
+  color: #ffe7be;
+  box-shadow: 0 10px 24px rgba(173, 130, 69, 0.22);
+}
+
+.admin-action {
+  border-color: #4a638f;
+  background: linear-gradient(140deg, #22355a 0%, #192847 100%);
+}
+
+.admin-action:hover,
+.admin-tab:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+
+.admin-action.primary {
+  box-shadow: 0 10px 24px rgba(170, 130, 71, 0.28);
+}
+
+.admin-notice {
+  border-color: #9a7543;
+  background: linear-gradient(135deg, rgba(224, 184, 122, 0.22) 0%, rgba(126, 97, 53, 0.16) 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0ms !important;
+    transition-duration: 0ms !important;
+  }
+}

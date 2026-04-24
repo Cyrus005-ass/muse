@@ -1,0 +1,23 @@
+haac:
+  auto_scan: true
+  forbidden_words:
+    - insulte_ethnique
+    - drogue_dure
+    - appel_haine
+    - propagande_politique_extreme
+  quarantine_if_politique: true
+  quarantine_if_religion: true
+ai_dub:
+  langs:
+    - fon
+    - mina
+    - yoruba
+    - dendi
+  glossaire_path: ./data/glossaire_fr_fon.csv
+afri_resources:
+  language_pack: ./data/afri_language_resources.md
+  priorities:
+    - fon
+    - mina
+    - yoruba
+    - dendi

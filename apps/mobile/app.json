@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "Muse Origin",
+    "slug": "muse-origin-streaming",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "assetBundlePatterns": ["**/*"]
+  }
+}

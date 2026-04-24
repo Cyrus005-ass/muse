@@ -1,0 +1,20 @@
+node_modules/
+.next/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+
+*.db
+*.db-shm
+*.db-wal
+
+# Runtime artifacts
+storage/
+tmp/
+contracts/*.pdf
+
+*.tsbuildinfo

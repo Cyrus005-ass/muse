@@ -1,0 +1,2006 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vision Produit — Plateforme Streaming Next-Gen</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0f;
+    --paper: #f5f0e8;
+    --accent: #e8320a;
+    --gold: #c9a84c;
+    --steel: #1e2433;
+    --muted: #6b6b7a;
+    --border: rgba(10,10,15,0.12);
+    --card-bg: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.6;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 48px 64px;
+    position: relative;
+    overflow: hidden;
+    background: var(--ink);
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 40%, rgba(232,50,10,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 80% at 20% 80%, rgba(201,168,76,0.1) 0%, transparent 60%);
+  }
+
+  .cover-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .logo-mark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--paper);
+    letter-spacing: 4px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-mark span {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    display: inline-block;
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.7; }
+  }
+
+  .cover-badge {
+    border: 1px solid rgba(245,240,232,0.25);
+    color: rgba(245,240,232,0.6);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 2px;
+  }
+
+  .cover-hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    padding: 80px 0 40px;
+  }
+
+  .cover-eyebrow {
+    font-size: 12px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .cover-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 12vw, 160px);
+    line-height: 0.9;
+    color: var(--paper);
+    letter-spacing: -2px;
+    max-width: 900px;
+  }
+
+  .cover-title em {
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  .cover-sub {
+    margin-top: 48px;
+    font-size: 18px;
+    color: rgba(245,240,232,0.55);
+    max-width: 540px;
+    font-weight: 300;
+    line-height: 1.8;
+  }
+
+  .cover-divider {
+    width: 60px;
+    height: 2px;
+    background: var(--accent);
+    margin: 32px 0;
+  }
+
+  .cover-meta {
+    display: flex;
+    gap: 48px;
+    position: relative;
+    z-index: 2;
+    padding-top: 48px;
+    border-top: 1px solid rgba(245,240,232,0.1);
+  }
+
+  .cover-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .cover-meta-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.3);
+  }
+
+  .cover-meta-value {
+    font-size: 14px;
+    color: rgba(245,240,232,0.7);
+    font-weight: 500;
+  }
+
+  /* ── BIG NUMBER / WATERMARK ── */
+  .cover-watermark {
+    position: absolute;
+    right: -20px;
+    bottom: -40px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 320px;
+    color: rgba(245,240,232,0.025);
+    line-height: 1;
+    pointer-events: none;
+    z-index: 1;
+    user-select: none;
+  }
+
+  /* ── MAIN CONTAINER ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 64px;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    padding: 120px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.3;
+    max-width: 60px;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 24px;
+    max-width: 700px;
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .section-intro {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 600px;
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  /* ── PHILOSOPHY BLOCK ── */
+  .philosophy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-top: 80px;
+    background: var(--border);
+  }
+
+  .philosophy-cell {
+    background: var(--paper);
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s ease;
+  }
+
+  .philosophy-cell:hover {
+    background: var(--ink);
+  }
+
+  .philosophy-cell:hover .philosophy-number,
+  .philosophy-cell:hover .philosophy-title,
+  .philosophy-cell:hover .philosophy-text {
+    color: var(--paper);
+  }
+
+  .philosophy-cell:hover .philosophy-accent {
+    background: var(--accent);
+  }
+
+  .philosophy-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 80px;
+    color: rgba(10,10,15,0.06);
+    line-height: 1;
+    margin-bottom: -20px;
+    transition: color 0.3s;
+  }
+
+  .philosophy-accent {
+    width: 40px;
+    height: 3px;
+    background: var(--ink);
+    margin: 24px 0 20px;
+    transition: background 0.3s;
+  }
+
+  .philosophy-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    margin-bottom: 16px;
+    transition: color 0.3s;
+  }
+
+  .philosophy-text {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    transition: color 0.3s;
+  }
+
+  /* ── FEATURES MEGA-LIST ── */
+  .features-intro-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+    margin-bottom: 80px;
+  }
+
+  .feature-category {
+    margin-bottom: 64px;
+  }
+
+  .feature-cat-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .feature-cat-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .feature-cat-info { flex: 1; }
+
+  .feature-cat-tag {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .feature-cat-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    margin-top: 2px;
+  }
+
+  .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .feature-item {
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    align-items: start;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: default;
+    transition: all 0.2s ease;
+  }
+
+  .feature-item:hover {
+    padding-left: 8px;
+    border-bottom-color: var(--ink);
+  }
+
+  .feature-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin-top: 8px;
+    flex-shrink: 0;
+  }
+
+  .feature-content { flex: 1; }
+
+  .feature-name {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+
+  .feature-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .feature-badge {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    white-space: nowrap;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  .badge-new { background: var(--accent); color: white; }
+  .badge-unique { background: var(--gold); color: white; }
+  .badge-pro { background: var(--steel); color: var(--paper); }
+  .badge-ai { background: #4a1d96; color: white; }
+
+  /* ── UX INNOVATIONS ── */
+  .innovations-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 64px;
+    background: var(--ink);
+  }
+
+  .innovation-card {
+    background: var(--paper);
+    padding: 40px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .innovation-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .innovation-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .innovation-icon {
+    font-size: 32px;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .innovation-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .innovation-text {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── DARK SECTION ── */
+  .section-dark {
+    background: var(--ink);
+    padding: 120px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-dark::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 60% at 80% 20%, rgba(232,50,10,0.1) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 50% at 10% 80%, rgba(201,168,76,0.07) 0%, transparent 50%);
+  }
+
+  .section-dark .section-label { color: var(--gold); }
+  .section-dark .section-label::after { background: var(--gold); }
+  .section-dark .section-title { color: var(--paper); }
+  .section-dark .section-intro { color: rgba(245,240,232,0.5); }
+
+  /* ── ROADMAP ── */
+  .roadmap-timeline {
+    position: relative;
+    margin-top: 80px;
+  }
+
+  .roadmap-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(245,240,232,0.15);
+  }
+
+  .roadmap-phase {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 64px;
+    padding: 0 0 72px 0;
+    position: relative;
+  }
+
+  .roadmap-phase::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 8px;
+    width: 9px;
+    height: 9px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px var(--ink), 0 0 0 6px var(--accent);
+  }
+
+  .roadmap-time {
+    padding-left: 24px;
+  }
+
+  .roadmap-phase-label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .roadmap-phase-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--paper);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+
+  .roadmap-phase-period {
+    font-size: 13px;
+    color: rgba(245,240,232,0.35);
+    margin-top: 8px;
+  }
+
+  .roadmap-content {}
+
+  .roadmap-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .roadmap-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 20px 24px;
+    border: 1px solid rgba(245,240,232,0.08);
+    border-radius: 4px;
+    transition: border-color 0.3s, background 0.3s;
+  }
+
+  .roadmap-item:hover {
+    border-color: rgba(232,50,10,0.4);
+    background: rgba(232,50,10,0.05);
+  }
+
+  .roadmap-item-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    width: 36px;
+    text-align: center;
+  }
+
+  .roadmap-item-title {
+    font-weight: 600;
+    color: var(--paper);
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .roadmap-item-desc {
+    font-size: 13px;
+    color: rgba(245,240,232,0.45);
+    line-height: 1.6;
+  }
+
+  /* ── TECH STACK ── */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-top: 64px;
+    background: var(--border);
+  }
+
+  .tech-card {
+    background: var(--card-bg);
+    padding: 32px 28px;
+    transition: background 0.3s;
+  }
+
+  .tech-card:hover { background: var(--ink); }
+  .tech-card:hover .tech-name,
+  .tech-card:hover .tech-desc { color: var(--paper); }
+  .tech-card:hover .tech-layer { color: var(--gold); }
+
+  .tech-layer {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    font-weight: 600;
+    transition: color 0.3s;
+  }
+
+  .tech-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    margin-bottom: 8px;
+    transition: color 0.3s;
+  }
+
+  .tech-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    transition: color 0.3s;
+  }
+
+  /* ── KPI SECTION ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--ink);
+    margin-top: 64px;
+  }
+
+  .kpi-card {
+    background: var(--paper);
+    padding: 48px 40px;
+    position: relative;
+  }
+
+  .kpi-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .kpi-unit {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--muted);
+  }
+
+  .kpi-label {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 11px;
+  }
+
+  .kpi-desc {
+    font-size: 14px;
+    color: var(--ink);
+    margin-top: 16px;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* ── QUOTE BLOCK ── */
+  .quote-block {
+    padding: 80px;
+    background: var(--ink);
+    position: relative;
+    overflow: hidden;
+    margin: 120px 0;
+  }
+
+  .quote-block::before {
+    content: '"';
+    position: absolute;
+    top: -40px;
+    left: 40px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 300px;
+    color: rgba(245,240,232,0.04);
+    line-height: 1;
+  }
+
+  .quote-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(24px, 4vw, 42px);
+    color: var(--paper);
+    line-height: 1.4;
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+  }
+
+  .quote-text em { color: var(--gold); font-style: italic; }
+
+  .quote-source {
+    margin-top: 32px;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.35);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── UX MOCKUP WIREFRAME ── */
+  .wireframe-section {
+    background: var(--steel);
+    padding: 80px;
+    margin-top: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .wireframe-label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: rgba(245,240,232,0.3);
+    text-transform: uppercase;
+    margin-bottom: 40px;
+  }
+
+  .wf-screen {
+    background: rgba(0,0,0,0.4);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .wf-topbar {
+    background: rgba(0,0,0,0.5);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .wf-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: var(--accent);
+    letter-spacing: 3px;
+  }
+
+  .wf-nav {
+    display: flex;
+    gap: 24px;
+    margin-left: 32px;
+  }
+
+  .wf-nav-item {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+  }
+
+  .wf-nav-item.active { color: white; }
+
+  .wf-search {
+    margin-left: auto;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 8px 16px;
+    color: rgba(255,255,255,0.3);
+    font-size: 13px;
+    width: 200px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .wf-hero {
+    height: 260px;
+    background: linear-gradient(135deg, rgba(232,50,10,0.3) 0%, rgba(30,36,51,0.8) 60%);
+    padding: 40px 40px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .wf-hero-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #1a0a05 0%, #0d1220 100%);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 40px;
+  }
+
+  .wf-thumbnail {
+    width: 200px;
+    height: 260px;
+    background: linear-gradient(135deg, #2a1a0f 0%, #0f1828 100%);
+    border-radius: 4px;
+    opacity: 0.6;
+  }
+
+  .wf-hero-content {
+    position: relative;
+    z-index: 2;
+    padding-bottom: 32px;
+  }
+
+  .wf-hero-genre {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .wf-hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: white;
+    letter-spacing: 2px;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .wf-hero-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 20px;
+  }
+
+  .wf-hero-desc {
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    max-width: 400px;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  .wf-hero-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .wf-btn-primary {
+    background: white;
+    color: black;
+    padding: 10px 24px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 3px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .wf-btn-secondary {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    padding: 10px 24px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 3px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .wf-emotion-bar {
+    display: flex;
+    gap: 4px;
+    padding: 0 24px;
+    margin-top: -1px;
+    background: rgba(0,0,0,0.3);
+    padding: 12px 40px;
+    align-items: center;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .wf-emotion-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-right: 16px;
+  }
+
+  .wf-emotion-tag {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.5);
+  }
+
+  .wf-emotion-tag.active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .wf-rail {
+    padding: 32px 40px 0;
+  }
+
+  .wf-rail-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .wf-rail-title::after {
+    content: '›';
+    color: var(--accent);
+    font-size: 18px;
+  }
+
+  .wf-cards-row {
+    display: flex;
+    gap: 12px;
+    overflow: hidden;
+  }
+
+  .wf-card {
+    flex-shrink: 0;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .wf-card-img {
+    background: linear-gradient(135deg, #1c2030 0%, #0d1020 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .wf-card-img.wide { width: 200px; height: 113px; }
+  .wf-card-img.portrait { width: 110px; height: 160px; }
+
+  .wf-card-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .wf-card-progress-bar {
+    height: 100%;
+    background: var(--accent);
+  }
+
+  .wf-card-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: var(--accent);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: white;
+    padding: 2px 6px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  /* Mood bar gradient */
+  .wf-card-mood-strip {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+  }
+
+  .wf-screen-annotation {
+    position: absolute;
+    right: -220px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .annotation-line {
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    margin-top: 10px;
+    flex-shrink: 0;
+  }
+
+  .annotation-text {
+    font-size: 12px;
+    color: rgba(245,240,232,0.5);
+    max-width: 140px;
+    line-height: 1.4;
+  }
+
+  /* ── DIFFERENTIATORS SECTION ── */
+  .diff-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-top: 64px;
+    border: 2px solid var(--ink);
+  }
+
+  .diff-card {
+    padding: 48px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .diff-card:nth-child(even) { border-right: none; }
+  .diff-card:nth-last-child(-n+2) { border-bottom: none; }
+
+  .diff-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 120px;
+    color: rgba(10,10,15,0.05);
+    line-height: 0.8;
+    position: absolute;
+    top: 20px;
+    right: 24px;
+  }
+
+  .diff-icon { font-size: 32px; margin-bottom: 20px; display: block; }
+
+  .diff-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .diff-text {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    position: relative;
+    z-index: 1;
+  }
+
+  .diff-tag {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--ink);
+    padding: 80px 0 48px;
+  }
+
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(245,240,232,0.1);
+    margin-bottom: 48px;
+  }
+
+  .footer-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--paper);
+    letter-spacing: 4px;
+    line-height: 1;
+  }
+
+  .footer-brand span { color: var(--accent); }
+
+  .footer-tagline {
+    font-size: 14px;
+    color: rgba(245,240,232,0.35);
+    margin-top: 8px;
+    letter-spacing: 1px;
+  }
+
+  .footer-doc-info {
+    text-align: right;
+  }
+
+  .footer-doc-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.25);
+    margin-bottom: 8px;
+  }
+
+  .footer-doc-version {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: rgba(245,240,232,0.6);
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-copy {
+    font-size: 12px;
+    color: rgba(245,240,232,0.2);
+    letter-spacing: 1px;
+  }
+
+  .footer-confidential {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.2);
+    border: 1px solid rgba(245,240,232,0.1);
+    padding: 6px 14px;
+    border-radius: 2px;
+  }
+
+  /* ── HORIZONTAL SCROLL HINT ── */
+  .scroll-hint {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 40px;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .scroll-arrow {
+    width: 32px;
+    height: 1px;
+    background: var(--muted);
+    position: relative;
+  }
+
+  .scroll-arrow::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -3px;
+    border-style: solid;
+    border-width: 3px 0 3px 6px;
+    border-color: transparent transparent transparent var(--muted);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .container { padding: 0 32px; }
+    .cover { padding: 32px; }
+    .philosophy-grid,
+    .diff-grid,
+    .kpi-grid,
+    .innovations-grid,
+    .tech-grid { grid-template-columns: 1fr; }
+    .features-intro-block { grid-template-columns: 1fr; gap: 40px; }
+    .roadmap-phase { grid-template-columns: 1fr; gap: 24px; }
+    .wireframe-section { padding: 40px; }
+    .wf-hero { height: auto; min-height: 200px; }
+    .quote-block { padding: 48px 40px; }
+  }
+
+  /* Fade in animation */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-in {
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ COVER ═══ -->
+<div class="cover">
+  <div class="cover-watermark">∞</div>
+
+  <nav class="cover-nav">
+    <div class="logo-mark"><span></span>PLATFORM</div>
+    <div class="cover-badge">Document Vision Produit · Confidentiel</div>
+  </nav>
+
+  <div class="cover-hero">
+    <div class="cover-eyebrow">Vision Produit · Stratégie 2025–2027</div>
+    <h1 class="cover-title">AU-DELÀ<br>DU <em>STREAM</em></h1>
+    <div class="cover-divider"></div>
+    <p class="cover-sub">Une plateforme qui ne diffuse pas du contenu — elle orchestre des expériences. Le premier OS émotionnel du streaming africain et francophone.</p>
+  </div>
+
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Version</span>
+      <span class="cover-meta-value">2.0 — Pro Vision</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Statut</span>
+      <span class="cover-meta-value">MVP → Scale</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Horizon</span>
+      <span class="cover-meta-value">36 mois</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Positionnement</span>
+      <span class="cover-meta-value">Netflix × Canal+ × Spotify, réinventés</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ PHILOSOPHIE ═══ -->
+<div class="section">
+  <div class="container">
+    <div class="section-label">01 · Fondations</div>
+    <h2 class="section-title">La philosophie qui <em>change tout</em></h2>
+    <p class="section-intro">Pas une copie de Netflix. Pas un Canal+ moins cher. Une plateforme construite autour d'une conviction : l'émotion est la prochaine interface.</p>
+
+    <div class="philosophy-grid">
+      <div class="philosophy-cell">
+        <div class="philosophy-number">01</div>
+        <div class="philosophy-accent"></div>
+        <div class="philosophy-title">Émotion First</div>
+        <p class="philosophy-text">Le streaming traditionnel classe par genre, format, popularité. Nous classons par état émotionnel. "J'ai besoin de me sentir vivant" est une intention valide. Notre moteur la comprend.</p>
+      </div>
+      <div class="philosophy-cell">
+        <div class="philosophy-number">02</div>
+        <div class="philosophy-accent"></div>
+        <div class="philosophy-title">Contexte Intelligent</div>
+        <p class="philosophy-text">La plateforme s'adapte à qui vous êtes maintenant : heure de la journée, météo locale, rythme cardiaque si disponible, historique émotionnel. Chaque session est unique.</p>
+      </div>
+      <div class="philosophy-cell">
+        <div class="philosophy-number">03</div>
+        <div class="philosophy-accent"></div>
+        <div class="philosophy-title">Social by Design</div>
+        <p class="philosophy-text">Regarder seul est une option, pas l'expérience par défaut. Rooms synchronisées, réactions en temps réel, commentary tracks partagés, clubs de visionnage asynchrones.</p>
+      </div>
+      <div class="philosophy-cell">
+        <div class="philosophy-number">04</div>
+        <div class="philosophy-accent"></div>
+        <div class="philosophy-title">Créateur au Centre</div>
+        <p class="philosophy-text">Le contenu africain et francophone n'est pas un "segment". C'est le cœur. Des outils de distribution, analytics deep, revenus transparents pour chaque créateur sur la plateforme.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ QUOTE ═══ -->
+<div class="container">
+  <div class="quote-block">
+    <p class="quote-text">Netflix vous dit quoi regarder. Spotify vous dit quoi écouter. <em>Notre plateforme vous demande comment vous vous sentez</em> — et construit l'expérience à partir de là.</p>
+    <div class="quote-source">Principe fondateur · Vision Produit 2025</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ FEATURES ═══ -->
+<div class="section">
+  <div class="container">
+    <div class="section-label">02 · Fonctionnalités</div>
+    <h2 class="section-title">Ce que la plateforme <em>fait vraiment</em></h2>
+    <p class="section-intro">Chaque feature a une raison d'exister. Aucune n'est là pour cocher une case. Voici l'architecture fonctionnelle complète.</p>
+
+    <!-- EXPERIENCE VIEWER -->
+    <div class="feature-category" style="margin-top: 64px;">
+      <div class="feature-cat-header">
+        <div class="feature-cat-number">A</div>
+        <div class="feature-cat-info">
+          <div class="feature-cat-tag">Couche</div>
+          <div class="feature-cat-name">Expérience Spectateur</div>
+        </div>
+      </div>
+      <ul class="feature-list">
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">MoodEngine™ — Navigation par état émotionnel</div>
+            <div class="feature-desc">Au lieu de "Action", "Comédie" : "Je veux pleurer", "Je veux ressentir quelque chose", "J'ai besoin de m'évader". Un sélecteur d'émotion remplace le menu genre. L'IA mappe émotions → contenus via des embeddings sémantiques multi-dimensionnels.</div>
+          </div>
+          <span class="feature-badge badge-unique">INÉDIT</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">WatchRoom — Co-visionnage synchronisé mondial</div>
+            <div class="feature-desc">Créez une room, invitez jusqu'à 50 personnes, regardez en parfaite synchronisation avec chat intégré, réactions flottantes, voice call optionnel. Fonctionne cross-device, cross-timezone avec compensation de latence.</div>
+          </div>
+          <span class="feature-badge badge-new">NEW</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">SmartResume — Reprise contextuelle intelligente</div>
+            <div class="feature-desc">Pas juste "reprendre là où vous en étiez". Si vous n'avez pas regardé depuis 3 semaines, la plateforme propose un "Previously on..." personnalisé — résumé IA des scènes clés. Si vous changez d'appareil, adaptation automatique de la qualité vidéo.</div>
+          </div>
+          <span class="feature-badge badge-ai">IA</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">DeepFocus Mode — Streaming sans distraction</div>
+            <div class="feature-desc">Mode immersif qui désactive toutes les notifications système, assombrit les bords de l'écran (vignettage dynamique), synchronise les couleurs d'ambiance avec le contenu (ambilight software). Sur mobile : DND automatique, rotation bloquée.</div>
+          </div>
+          <span class="feature-badge badge-new">NEW</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">Commentary Track — Piste audio alternative</div>
+            <div class="feature-desc">Des créateurs, critiques, et fans peuvent enregistrer une piste audio alternative synchronisée. Regardez un film avec le réalisateur qui commente en direct. Ou un ami youtuber. Ou une version "vulgarisation culturelle" en langue locale.</div>
+          </div>
+          <span class="feature-badge badge-unique">INÉDIT</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">ChapterMap — Navigation visuelle dans l'épisode</div>
+            <div class="feature-desc">Timeline enrichie avec miniatures, marqueurs d'intensité émotionnelle (pic de tension, moment clé, scène culte), marqueurs communautaires. On peut "jump to" la scène dont tout le monde parle sur les réseaux.</div>
+          </div>
+          <span class="feature-badge badge-new">NEW</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">LanguageLens — Adaptation linguistique intelligente</div>
+            <div class="feature-desc">Sous-titres adaptatifs : taille, police, couleur selon le contexte (action = gras, chuchotement = petit, humour = couleur). Traduction en wolof, haoussa, lingala, et autres langues africaines. Sous-titres phonétiques pour apprendre une langue en regardant.</div>
+          </div>
+          <span class="feature-badge badge-unique">INÉDIT</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- DISCOVERY -->
+    <div class="feature-category">
+      <div class="feature-cat-header">
+        <div class="feature-cat-number">B</div>
+        <div class="feature-cat-info">
+          <div class="feature-cat-tag">Couche</div>
+          <div class="feature-cat-name">Découverte & Recommandation</div>
+        </div>
+      </div>
+      <ul class="feature-list">
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">ContextCast — Recommandations situationnelles</div>
+            <div class="feature-desc">18h un vendredi ? Suggestion apéro-friendly. 23h seul un mardi ? Films introspectifs. Fête nationale ? Rail "Notre Histoire". Ramadan ? Mode adapté. La plateforme connaît votre contexte culturel et calendaire.</div>
+          </div>
+          <span class="feature-badge badge-ai">IA</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">TasteGraph — Graphe de goût visuel interactif</div>
+            <div class="feature-desc">Votre profil de goût est une toile d'araignée visualisée : axes émotionnels, thématiques, esthétiques. Vous pouvez le modifier manuellement, le partager, comparer avec des amis. Transparent et éditable — pas une boîte noire algorithmique.</div>
+          </div>
+          <span class="feature-badge badge-unique">INÉDIT</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">Sérendipité Mode — Découverte aléatoire maîtrisée</div>
+            <div class="feature-desc">Un bouton "Surprends-moi" qui génère une expérience de découverte — mais pas totalement aléatoire. L'algorithme joue sur le bord de votre zone de confort : 80% familier, 20% inconnu. Paramétrable.</div>
+          </div>
+          <span class="feature-badge badge-new">NEW</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">CinéFil — Parcours thématiques éditoriaux</div>
+            <div class="feature-desc">Des "playlists narratives" créées par des éditeurs humains et des critiques : "Les 10 films qui ont changé le cinéma africain", "Comprendre le Néoréalisme en 5 films". Apprentissage cinématographique intégré.</div>
+          </div>
+          <span class="feature-badge badge-pro">PRO</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- SOCIAL -->
+    <div class="feature-category">
+      <div class="feature-cat-header">
+        <div class="feature-cat-number">C</div>
+        <div class="feature-cat-info">
+          <div class="feature-cat-tag">Couche</div>
+          <div class="feature-cat-name">Social & Communauté</div>
+        </div>
+      </div>
+      <ul class="feature-list">
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">Scene Clips — Partage de moments précis</div>
+            <div class="feature-desc">Partagez une scène exacte (début + fin au frame près) vers WhatsApp, Instagram, TikTok — avec filigrane élégant. Bouton natif dans le player. Le clip devient une porte d'entrée vers la plateforme pour ceux qui le reçoivent.</div>
+          </div>
+          <span class="feature-badge badge-new">NEW</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">ReviewCards — Critiques visuelles partageables</div>
+            <div class="feature-desc">Après un visionnage, la plateforme génère une "carte souvenir" : affiche stylisée, votre note, votre phrase, vos émotions trackées pendant le film. Format carré prêt pour Instagram. Mémorable et viral.</div>
+          </div>
+          <span class="feature-badge badge-unique">INÉDIT</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">CinéClub — Clubs de visionnage asynchrones</div>
+            <div class="feature-desc">Un groupe de 2 à 20 personnes se fixe un film par semaine. Chacun regarde quand il veut. Discussion structurée avec prompts, votes sur les meilleures répliques, sondages d'opinion. Notifications hebdomadaires.</div>
+          </div>
+          <span class="feature-badge badge-new">NEW</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">LiveReactions — Réactions émotionnelles en temps réel</div>
+            <div class="feature-desc">En WatchRoom, des emojis émotionnels flottent à l'écran au moment où les spectateurs les déclenchent. Pas de spam : throttle intelligent, regroupement visuel. La courbe des réactions devient une metadata du contenu.</div>
+          </div>
+          <span class="feature-badge badge-new">NEW</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- CREATOR -->
+    <div class="feature-category">
+      <div class="feature-cat-header">
+        <div class="feature-cat-number">D</div>
+        <div class="feature-cat-info">
+          <div class="feature-cat-tag">Couche</div>
+          <div class="feature-cat-name">Espace Créateur</div>
+        </div>
+      </div>
+      <ul class="feature-list">
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">CreatorStudio — Tableau de bord créateur complet</div>
+            <div class="feature-desc">Upload, encoding automatique, chapitrage IA, génération de miniatures, analytics deep (rétention, émotion, drops), gestion des revenus en temps réel. Un YouTube Studio mais centré streaming long format.</div>
+          </div>
+          <span class="feature-badge badge-pro">PRO</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">RevenueSplit — Monétisation transparente</div>
+            <div class="feature-desc">Dashboard des revenus avec split détaillé : minutes vues × tarif, boost d'abonnements attribués, revenus des Commentary Tracks vendus. Paiement mobile money (Orange Money, Wave, MTN) + virement bancaire.</div>
+          </div>
+          <span class="feature-badge badge-unique">INÉDIT</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">AudienceInsights — Carte émotionnelle du contenu</div>
+            <div class="feature-desc">Le créateur voit où son contenu fait rire, pleurer, faire pause, abandonner — agrégé sur toute l'audience. Courbe d'engagement à la minute. Heatmap des scènes les plus partagées. Données actionnables.</div>
+          </div>
+          <span class="feature-badge badge-ai">IA</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- TECH EXPERIENCE -->
+    <div class="feature-category">
+      <div class="feature-cat-header">
+        <div class="feature-cat-number">E</div>
+        <div class="feature-cat-info">
+          <div class="feature-cat-tag">Couche</div>
+          <div class="feature-cat-name">Infrastructure & Performance</div>
+        </div>
+      </div>
+      <ul class="feature-list">
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">AdaptiveAfrica — Stack optimisée pour l'Afrique</div>
+            <div class="feature-desc">CDN avec nœuds en Afrique de l'Ouest, du Centre, de l'Est. Mode économiseur de données intelligent : qualité adaptive selon le coût data estimé (2G/3G/WiFi détectés). Cache prédictif : les 3 prochains épisodes téléchargés en arrière-plan sur WiFi.</div>
+          </div>
+          <span class="feature-badge badge-unique">INÉDIT</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">OfflineFirst — Téléchargement intelligent</div>
+            <div class="feature-desc">Téléchargement en tâche de fond selon vos habitudes (le dimanche soir = préparation semaine auto), expiration intelligente des fichiers, Smart Download qui anticipe ce que vous allez vouloir voir.</div>
+          </div>
+          <span class="feature-badge badge-new">NEW</span>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-content">
+            <div class="feature-name">DeviceHandoff — Continuité cross-device fluide</div>
+            <div class="feature-desc">Commencez sur mobile dans les transports, continuez sur TV en arrivant chez vous — sans aucune action. Détection du réseau local, handoff automatique. La télécommande devient "Continuer ici" en un tap.</div>
+          </div>
+          <span class="feature-badge badge-new">NEW</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ WIREFRAME UI ═══ -->
+<div class="section">
+  <div class="container">
+    <div class="section-label">03 · Interface</div>
+    <h2 class="section-title">Une interface <em>qui capture</em></h2>
+    <p class="section-intro">L'UI n'est pas habillage. C'est le produit. Voici la vision de l'interface qui redéfinit les codes du streaming.</p>
+
+    <div class="wireframe-section">
+      <div class="wireframe-label">Aperçu · Interface Web · Version 2.0</div>
+      <div class="wf-screen">
+        <!-- Top Bar -->
+        <div class="wf-topbar">
+          <div class="wf-logo">PLATEFM</div>
+          <div class="wf-nav">
+            <span class="wf-nav-item active">Accueil</span>
+            <span class="wf-nav-item">Séries</span>
+            <span class="wf-nav-item">Films</span>
+            <span class="wf-nav-item">Live</span>
+            <span class="wf-nav-item">Ma Liste</span>
+          </div>
+          <div class="wf-search">🔍 Rechercher par humeur…</div>
+        </div>
+
+        <!-- Emotion Pill Bar -->
+        <div style="background: rgba(0,0,0,0.7); padding: 10px 40px; display:flex; gap:8px; align-items:center; border-bottom: 1px solid rgba(255,255,255,0.05);">
+          <span style="font-size:10px; letter-spacing:3px; color:rgba(255,255,255,0.25); text-transform:uppercase; margin-right:8px;">Comment tu te sens ?</span>
+          <span class="wf-emotion-tag active">😮 Émerveillé</span>
+          <span class="wf-emotion-tag">😢 Contemplatif</span>
+          <span class="wf-emotion-tag">😂 Légèreté</span>
+          <span class="wf-emotion-tag">⚡ Adrénaline</span>
+          <span class="wf-emotion-tag">🌙 Détente</span>
+        </div>
+
+        <!-- Hero -->
+        <div class="wf-hero">
+          <div class="wf-hero-bg">
+            <div class="wf-thumbnail"></div>
+          </div>
+          <div class="wf-hero-content">
+            <div class="wf-hero-genre">Série · Drame · Côte d'Ivoire · 2025</div>
+            <div class="wf-hero-title">ABIDJAN NOIR</div>
+            <div class="wf-hero-meta">
+              <span>8 épisodes</span>
+              <span>·</span>
+              <span>98% d'intensité</span>
+              <span>·</span>
+              <span>12 000 viewers</span>
+              <span>·</span>
+              <span style="color:#c9a84c">★ 4.8</span>
+            </div>
+            <div class="wf-hero-desc">Un enquêteur désabusé plonge dans les entrailles d'une ville qui dévore ses enfants. Nommé aux Africa Screen Awards 2025.</div>
+            <div class="wf-hero-actions">
+              <div class="wf-btn-primary">▶ Regarder</div>
+              <div class="wf-btn-secondary">+ Ma Liste</div>
+              <div class="wf-btn-secondary">👥 WatchRoom</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Continue watching rail -->
+        <div class="wf-rail" style="padding-bottom:0;">
+          <div class="wf-rail-title">Continuer à regarder</div>
+          <div class="wf-cards-row">
+            <div class="wf-card" style="position:relative;">
+              <div class="wf-card-img wide" style="background:linear-gradient(135deg,#1a2040,#0d1020);">
+                <span style="color:rgba(255,255,255,0.2); font-size:12px;">Ép. 3</span>
+              </div>
+              <div class="wf-card-progress"><div class="wf-card-progress-bar" style="width:65%"></div></div>
+              <div class="wf-card-badge">65%</div>
+            </div>
+            <div class="wf-card" style="position:relative;">
+              <div class="wf-card-img wide" style="background:linear-gradient(135deg,#201a10,#100d08);">
+                <span style="color:rgba(255,255,255,0.2); font-size:12px;">Film</span>
+              </div>
+              <div class="wf-card-progress"><div class="wf-card-progress-bar" style="width:30%"></div></div>
+            </div>
+            <div class="wf-card" style="position:relative;">
+              <div class="wf-card-img wide" style="background:linear-gradient(135deg,#0d1a20,#081015);">
+                <span style="color:rgba(255,255,255,0.2); font-size:12px;">Ép. 1</span>
+              </div>
+              <div class="wf-card-progress"><div class="wf-card-progress-bar" style="width:10%"></div></div>
+              <div class="wf-card-badge" style="background:#c9a84c;">NOUVEAU</div>
+            </div>
+            <div class="wf-card" style="position:relative;">
+              <div class="wf-card-img wide" style="background:linear-gradient(135deg,#1a1020,#100d18);">
+              </div>
+              <div class="wf-card-progress"><div class="wf-card-progress-bar" style="width:88%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top 10 Rail -->
+        <div class="wf-rail" style="padding: 28px 40px 40px;">
+          <div class="wf-rail-title">Top 10 · Afrique de l'Ouest cette semaine</div>
+          <div class="wf-cards-row">
+            <div style="display:flex; align-items:flex-end; gap:4px; flex-shrink:0;">
+              <span style="font-family:'Bebas Neue',sans-serif; font-size:72px; color:rgba(255,255,255,0.12); line-height:1;">#1</span>
+              <div class="wf-card-img portrait" style="background:linear-gradient(160deg,#1a0a05,#100808); margin-bottom:4px;"></div>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:4px; flex-shrink:0;">
+              <span style="font-family:'Bebas Neue',sans-serif; font-size:72px; color:rgba(255,255,255,0.08); line-height:1;">#2</span>
+              <div class="wf-card-img portrait" style="background:linear-gradient(160deg,#0a101a,#080d12); margin-bottom:4px;"></div>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:4px; flex-shrink:0;">
+              <span style="font-family:'Bebas Neue',sans-serif; font-size:72px; color:rgba(255,255,255,0.06); line-height:1;">#3</span>
+              <div class="wf-card-img portrait" style="background:linear-gradient(160deg,#0a1a10,#081210); margin-bottom:4px;"></div>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:4px; flex-shrink:0;">
+              <span style="font-family:'Bebas Neue',sans-serif; font-size:72px; color:rgba(255,255,255,0.04); line-height:1;">#4</span>
+              <div class="wf-card-img portrait" style="background:linear-gradient(160deg,#1a1a0a,#12120a); margin-bottom:4px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Annotations -->
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; margin-top:32px;">
+        <div style="border-left:2px solid var(--gold); padding-left:16px;">
+          <div style="font-size:11px; letter-spacing:2px; color:var(--gold); text-transform:uppercase; margin-bottom:6px;">Navigation par émotion</div>
+          <div style="font-size:13px; color:rgba(245,240,232,0.5); line-height:1.5;">La barre de filtres émotionnels remplace la navigation par genre. Jamais vu sur une plateforme grand public.</div>
+        </div>
+        <div style="border-left:2px solid var(--accent); padding-left:16px;">
+          <div style="font-size:11px; letter-spacing:2px; color:var(--accent); text-transform:uppercase; margin-bottom:6px;">WatchRoom intégré au hero</div>
+          <div style="font-size:13px; color:rgba(245,240,232,0.5); line-height:1.5;">Le social n'est pas caché dans un menu. Il est au premier plan, à côté du bouton "Regarder".</div>
+        </div>
+        <div style="border-left:2px solid rgba(245,240,232,0.4); padding-left:16px;">
+          <div style="font-size:11px; letter-spacing:2px; color:rgba(245,240,232,0.5); text-transform:uppercase; margin-bottom:6px;">Top 10 régional</div>
+          <div style="font-size:13px; color:rgba(245,240,232,0.5); line-height:1.5;">Pas global. Afrique de l'Ouest, Maghreb, Diaspora — des classements qui résonnent avec votre identité.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ 6 DIFFÉRENCIATEURS ═══ -->
+<div class="section">
+  <div class="container">
+    <div class="section-label">04 · Positionnement</div>
+    <h2 class="section-title">6 choses qu'aucun concurrent <em>ne fait</em></h2>
+    <p class="section-intro">Netflix est global, Canal+ est premium, YouTube est gratuit. Voici ce qui n'existe nulle part.</p>
+
+    <div class="diff-grid">
+      <div class="diff-card">
+        <span class="diff-number">01</span>
+        <span class="diff-icon">🎭</span>
+        <div class="diff-title">Navigation émotionnelle</div>
+        <p class="diff-text">La première plateforme où l'entrée principale est une émotion, pas un genre. "Je veux ressentir quelque chose d'intense" est une requête valide. L'IA map les émotions à des contenus via des embeddings multi-axes.</p>
+        <span class="diff-tag">Jamais vu · Jamais fait</span>
+      </div>
+      <div class="diff-card">
+        <span class="diff-number">02</span>
+        <span class="diff-icon">🌍</span>
+        <div class="diff-title">Infrastructuré pour l'Afrique</div>
+        <p class="diff-text">Pas "compatible Afrique". Construit pour l'Afrique. CDN continental, mode data-saver intelligent, paiement mobile money natif, sous-titres en langues locales, top 10 régionaux. L'Afrique n'est pas un afterthought.</p>
+        <span class="diff-tag">First-of-its-kind</span>
+      </div>
+      <div class="diff-card">
+        <span class="diff-number">03</span>
+        <span class="diff-icon">🎙️</span>
+        <div class="diff-title">Commentary Tracks marketplace</div>
+        <p class="diff-text">Un marché de pistes audio alternatives. Des créateurs vendent leur commentaire synchronisé sur n'importe quel contenu. Regardez un film culte avec un réalisateur local qui analyse chaque scène. Révolutionnaire.</p>
+        <span class="diff-tag">Inédit mondial</span>
+      </div>
+      <div class="diff-card">
+        <span class="diff-number">04</span>
+        <span class="diff-icon">📊</span>
+        <div class="diff-title">TasteGraph transparent</div>
+        <p class="diff-text">Votre algorithme de recommandation vous appartient. Vous voyez, modifiez, et partagez votre graphe de goût. Fini la boîte noire. Cette transparence algorithmique est une première dans l'industrie streaming.</p>
+        <span class="diff-tag">Transparence radicale</span>
+      </div>
+      <div class="diff-card">
+        <span class="diff-number">05</span>
+        <span class="diff-icon">🃏</span>
+        <div class="diff-title">ReviewCards viraux</div>
+        <p class="diff-text">Après chaque visionnage, une carte souvenir générée automatiquement. Format Instagram-ready, esthétique premium, partageable en 1 tap. Chaque partage est une publicité organique qui ramène du trafic qualifié.</p>
+        <span class="diff-tag">Growth intégré</span>
+      </div>
+      <div class="diff-card">
+        <span class="diff-number">06</span>
+        <span class="diff-icon">💰</span>
+        <div class="diff-title">Économie créateur équitable</div>
+        <p class="diff-text">Revenue split transparent, paiement mobile money, analytics créateur complets incluant la cartographie émotionnelle de l'audience. Le créateur africain a enfin les mêmes outils qu'un YouTuber américain — et plus.</p>
+        <span class="diff-tag">Équité économique</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ ROADMAP ═══ -->
+<div class="section-dark">
+  <div class="container" style="position:relative; z-index:2;">
+    <div class="section-label">05 · Roadmap</div>
+    <h2 class="section-title">De MVP à <em>leader continental</em></h2>
+    <p class="section-intro">Trois phases, trois niveaux d'ambition. Chaque phase pose les fondations de la suivante.</p>
+
+    <div class="roadmap-timeline">
+
+      <div class="roadmap-phase">
+        <div class="roadmap-time">
+          <div class="roadmap-phase-label">Phase 1</div>
+          <div class="roadmap-phase-name">GO LIVE</div>
+          <div class="roadmap-phase-period">Mois 1–4</div>
+        </div>
+        <div class="roadmap-content">
+          <div class="roadmap-items">
+            <div class="roadmap-item">
+              <div class="roadmap-item-icon">🎬</div>
+              <div>
+                <div class="roadmap-item-title">Catalogue réel + Encoding pipeline</div>
+                <div class="roadmap-item-desc">Remplacer les mocks par un vrai pipeline : upload → transcoding HLS multi-qualité (360p/720p/1080p/4K) → CDN distribution. Intégration FFmpeg/AWS MediaConvert ou Mux.</div>
+              </div>
+            </div>
+            <div class="roadmap-item">
+              <div class="roadmap-item-icon">💳</div>
+              <div>
+                <div class="roadmap-item-title">Paiement réel — Mobile Money + Stripe</div>
+                <div class="roadmap-item-desc">Intégration Orange Money, Wave, MTN Mobile Money + Stripe pour cartes. Gestion des devises locales (XOF, XAF, NGN, KES). Reçus PDF automatiques.</div>
+              </div>
+            </div>
+            <div class="roadmap-item">
+              <div class="roadmap-item-icon">🔐</div>
+              <div>
+                <div class="roadmap-item-title">Sécurité Production-Grade</div>
+                <div class="roadmap-item-desc">DRM Widevine + FairPlay, protection HLS, rate limiting avancé, anti-sharing de compte, HTTPS strict, audit de sécurité pré-lancement.</div>
+              </div>
+            </div>
+            <div class="roadmap-item">
+              <div class="roadmap-item-icon">📺</div>
+              <div>
+                <div class="roadmap-item-title">App TV (Android TV + Apple TV)</div>
+                <div class="roadmap-item-desc">Experience lean-back 10-foot optimisée : navigation télécommande, profils family, interface "big screen" distincte du mobile.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-phase">
+        <div class="roadmap-time">
+          <div class="roadmap-phase-label">Phase 2</div>
+          <div class="roadmap-phase-name">DIFFÉRENCIATION</div>
+          <div class="roadmap-phase-period">Mois 5–12</div>
+        </div>
+        <div class="roadmap-content">
+          <div class="roadmap-items">
+            <div class="roadmap-item">
+              <div class="roadmap-item-icon">🎭</div>
+              <div>
+                <div class="roadmap-item-title">MoodEngine v1 — Navigation émotionnelle</div>
+                <div class="roadmap-item-desc">Déploiement de la navigation par état émotionnel. Modèle ML entraîné sur annotations émotionnelles du catalogue. Interface de sélection d'humeur en homepage.</div>
+              </div>
+            </div>
+            <div class="roadmap-item">
+              <div class="roadmap-item-icon">👥</div>
+              <div>
+                <div class="roadmap-item-title">WatchRoom — Co-visionnage synchronisé</div>
+                <div class="roadmap-item-desc">WebRTC pour sync temps réel, chat intégré, réactions flottantes, support jusqu'à 50 participants. Lien d'invitation partageable.</div>
+              </div>
+            </div>
+            <div class="roadmap-item">
+              <div class="roadmap-item-icon">🎙️</div>
+              <div>
+                <div class="roadmap-item-title">Commentary Tracks — Beta créateurs</div>
+                <div class="roadmap-item-desc">Outil d'enregistrement synchronisé pour créateurs, marketplace de pistes audio, premier modèle de monétisation des commentary tracks.</div>
+              </div>
+            </div>
+            <div class="roadmap-item">
+              <div class="roadmap-item-icon">📊</div>
+              <div>
+                <div class="roadmap-item-title">Analytics avancées — Créateurs et Admins</div>
+                <div class="roadmap-item-desc">Courbe de rétention à la minute, heatmap des scènes, cartographie émotionnelle agrégée, cohort analysis, churn prediction.</div>
+              </div>
+            </div>
+            <div class="roadmap-item">
+              <div class="roadmap-item-icon">🌍</div>
+              <div>
+                <div class="roadmap-item-title">AdaptiveAfrica — Stack réseau optimisée</div>
+                <div class="roadmap-item-desc">CDN avec PoPs Afrique, détection réseau intelligent, mode économiseur de données, cache prédictif, téléchargement offline automatisé.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-phase">
+        <div class="roadmap-time">
+          <div class="roadmap-phase-label">Phase 3</div>
+          <div class="roadmap-phase-name">DOMINATION</div>
+          <div class="roadmap-phase-period">Mois 13–36</div>
+        </div>
+        <div class="roadmap-content">
+          <div class="roadmap-items">
+            <div class="roadmap-item">
+              <div class="roadmap-item-icon">🤖</div>
+              <div>
+                <div class="roadmap-item-title">IA Générative — Résumés & Personnalisation extrême</div>
+                <div class="roadmap-item-desc">"Previously on..." généré par LLM, bandes-annonces personnalisées selon vos goûts, doublage IA dans les langues locales, suggestions ultra-contextuelles.</div>
+              </div>
+            </div>
+            <div class="roadmap-item">
+              <div class="roadmap-item-icon">🔴</div>
+              <div>
+                <div class="roadmap-item-title">Live Events — Avant-premières, concerts, sport</div>
+                <div class="roadmap-item-desc">Infrastructure live streaming : avant-premières de films, concerts, événements culturels, compétitions e-sport. Pay-per-view optionnel. Commentaires synchronisés en direct.</div>
+              </div>
+            </div>
+            <div class="roadmap-item">
+              <div class="roadmap-item-icon">🎮</div>
+              <div>
+                <div class="roadmap-item-title">Interactive Content — Narration non-linéaire</div>
+                <div class="roadmap-item-desc">Contenus avec choix narratifs (à la Bandersnatch) nativement supportés par le player. Outils créateurs pour développer des expériences interactives.</div>
+              </div>
+            </div>
+            <div class="roadmap-item">
+              <div class="roadmap-item-icon">🌐</div>
+              <div>
+                <div class="roadmap-item-title">Expansion — Diaspora mondiale + Partenariats</div>
+                <div class="roadmap-item-desc">Offre diaspora (Europe, Amérique du Nord), partenariats avec opérateurs télécom (bundle data + abonnement), white-label B2B pour hôtels et compagnies aériennes.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ KPIs CIBLES ═══ -->
+<div class="section">
+  <div class="container">
+    <div class="section-label">06 · Métriques</div>
+    <h2 class="section-title">Les chiffres qui <em>prouvent tout</em></h2>
+    <p class="section-intro">Trois métriques qui définissent le succès à 36 mois. Tout le reste en découle.</p>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-number">500<span class="kpi-unit">K</span></div>
+        <div class="kpi-label">Abonnés actifs · Objectif 36 mois</div>
+        <p class="kpi-desc">Atteindre 500 000 abonnés payants sur 3 ans via une croissance organique (ReviewCards, referral) combinée à des partenariats télécom en Afrique de l'Ouest.</p>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-number">4.5<span class="kpi-unit">×</span></div>
+        <div class="kpi-label">Rétention vs. benchmark industrie</div>
+        <p class="kpi-desc">Le WatchRoom, MoodEngine et CinéClub augmentent structurellement la rétention. Objectif : churn mensuel < 3% vs. 7–12% pour les plateformes streaming standard.</p>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-number">60<span class="kpi-unit">%</span></div>
+        <div class="kpi-label">Acquisition organique</div>
+        <p class="kpi-desc">Les ReviewCards partageables, les clips viraux et le WatchRoom font de chaque spectateur un vecteur de croissance. 60% des nouveaux users sans budget acquisition payant.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ TECH STACK ═══ -->
+<div class="section" style="background:var(--card-bg);">
+  <div class="container">
+    <div class="section-label">07 · Architecture</div>
+    <h2 class="section-title">Le stack qui <em>scale</em></h2>
+    <p class="section-intro">Architecture cible pour supporter 1M d'utilisateurs sans réécriture majeure. Construire maintenant ce dont on a besoin dans 18 mois.</p>
+
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="tech-layer">Apps</div>
+        <div class="tech-name">Next.js 15 + Expo</div>
+        <p class="tech-desc">App Router, Server Components, streaming SSR. Expo pour iOS/Android/TV dans un seul codebase.</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">API</div>
+        <div class="tech-name">Fastify + tRPC</div>
+        <p class="tech-desc">tRPC pour type-safety E2E. Fastify pour la performance pure. PostgreSQL + Redis pour la persistence et le cache.</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Vidéo</div>
+        <div class="tech-name">Mux + Cloudflare Stream</div>
+        <p class="tech-desc">Encoding multi-qualité automatique, DRM Widevine/FairPlay, CDN global avec PoPs africains, analytics vidéo intégrées.</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">IA / ML</div>
+        <div class="tech-name">OpenAI + Pinecone</div>
+        <p class="tech-desc">Embeddings sémantiques pour MoodEngine, vector search pour recommandations, GPT-4 pour résumés "Previously On".</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Realtime</div>
+        <div class="tech-name">Ably + WebRTC</div>
+        <p class="tech-desc">WatchRoom synchronisation sub-100ms, réactions live, présence et curseurs temps réel dans les interfaces admin.</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Paiement</div>
+        <div class="tech-name">Stripe + CinetPay</div>
+        <p class="tech-desc">Stripe pour cartes internationales. CinetPay/Flutterwave pour Orange Money, Wave, MTN MoMo en Afrique francophone.</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Infra</div>
+        <div class="tech-name">AWS + Terraform</div>
+        <p class="tech-desc">Infrastructure as Code, multi-région, auto-scaling. Monitoring Datadog, alerting PagerDuty, SLA 99.9%.</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Analytics</div>
+        <div class="tech-name">PostHog + Segment</div>
+        <p class="tech-desc">Product analytics open-source self-hostable. Segment pour unifier les events. Metabase pour les dashboards créateurs et admin.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ CLOSING ═══ -->
+<div style="background:var(--ink); padding:120px 0; position:relative; overflow:hidden;">
+  <div style="position:absolute; inset:0; background: radial-gradient(ellipse 50% 80% at 50% 50%, rgba(232,50,10,0.12) 0%, transparent 70%);"></div>
+  <div class="container" style="position:relative; z-index:2; text-align:center;">
+    <div style="font-size:10px; letter-spacing:5px; text-transform:uppercase; color:var(--accent); margin-bottom:32px;">Conclusion</div>
+    <h2 style="font-family:'DM Serif Display',serif; font-size:clamp(36px,6vw,80px); color:var(--paper); line-height:1.1; max-width:800px; margin:0 auto 40px;">
+      Ce n'est pas un produit.<br>C'est une <em style="color:var(--gold)">infrastructure culturelle</em>.
+    </h2>
+    <p style="font-size:18px; color:rgba(245,240,232,0.45); max-width:560px; margin:0 auto 64px; line-height:1.8; font-weight:300;">Netflix a construit Hollywood en ligne. Canal+ a monétisé le football. Nous construisons le lieu où la culture africaine et francophone vit, rayonne, et nourrit ses créateurs.</p>
+    <div style="display:flex; justify-content:center; gap:2px;">
+      <div style="background:rgba(245,240,232,0.06); border:1px solid rgba(245,240,232,0.1); padding:24px 40px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:40px; color:var(--accent);">4</div>
+        <div style="font-size:11px; letter-spacing:2px; color:rgba(245,240,232,0.3); text-transform:uppercase; margin-top:4px;">Apps Vivantes</div>
+      </div>
+      <div style="background:rgba(245,240,232,0.06); border:1px solid rgba(245,240,232,0.1); padding:24px 40px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:40px; color:var(--gold);">26</div>
+        <div style="font-size:11px; letter-spacing:2px; color:rgba(245,240,232,0.3); text-transform:uppercase; margin-top:4px;">Features Différenciantes</div>
+      </div>
+      <div style="background:rgba(245,240,232,0.06); border:1px solid rgba(245,240,232,0.1); padding:24px 40px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:40px; color:var(--paper);">6</div>
+        <div style="font-size:11px; letter-spacing:2px; color:rgba(245,240,232,0.3); text-transform:uppercase; margin-top:4px;">Premières Mondiales</div>
+      </div>
+      <div style="background:rgba(245,240,232,0.06); border:1px solid rgba(245,240,232,0.1); padding:24px 40px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:40px; color:var(--paper);">36</div>
+        <div style="font-size:11px; letter-spacing:2px; color:rgba(245,240,232,0.3); text-transform:uppercase; margin-top:4px;">Mois Pour Dominer</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ FOOTER ═══ -->
+<div class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">PLATFORM<span>.</span></div>
+        <div class="footer-tagline">L'OS émotionnel du streaming africain.</div>
+      </div>
+      <div class="footer-doc-info">
+        <div class="footer-doc-label">Document Vision</div>
+        <div class="footer-doc-version">Version 2.0 · 2025</div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 — Tous droits réservés</div>
+      <div class="footer-confidential">Confidentiel · Usage Interne</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
