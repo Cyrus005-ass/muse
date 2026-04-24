@@ -1,13 +1,21 @@
-﻿services:
+services:
   - type: web
     name: prospecthunter-cy-ass
-    env: python
+    env: node
     region: frankfurt
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    buildCommand: npm ci && npm run build -w apps/api
+    startCommand: API_PORT=$PORT npm run start -w apps/api
     envVars:
-      - key: PROSPECT_API_KEY
+      - key: NODE_VERSION
+        value: 20.11.1
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
         sync: false
-      - key: PYTHON_VERSION
-        value: 3.11.9
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DB_PATH
+        value: ./data/muse.db
